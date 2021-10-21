@@ -1,0 +1,47 @@
+clc
+clear
+dataDir = uigetdir(pwd,'find files');
+if exist('dataDir')~=1;
+    dataDir = uigetdir(pwd,'findfiles'); 
+end
+dataFiles=dir([dataDir,'/*.out']);
+
+avg_phase = [] ;%can put phases, mean phases, vector strength (storage array)
+circ_Std=[];
+
+for i = 1:length(dataFiles)  
+    fname = dataFiles(i).name; 
+    sorteddata = importdata([dataDir,filesep,fname]); 
+    
+    speakt = sorteddata.data(:,1); %speakt (hpeakt) = spike times
+    stimpeakt = sorteddata.data(:,3); %stimpeakt (wpeakt) = stimulus peak times
+    
+    phivalues = findsinphases(stimpeakt,speakt);%calls function
+
+    avg_phase = [avg_phase circ_mean(phivalues')];
+    
+    circ_Std=[circ_Std circ_Stand(phivalues')];
+%   disp(sprintf(' The average phase of %s is %d',fname,avg_phase(i)));
+    avg_deg = avg_phase*180/pi;
+    if avg_deg < 0, avg_deg = avg_deg + 360; end
+%   circ_Std= circ_Std*180/pi;
+%   disp([fname(1:10), 'Avg phase = ',num2str(avg_deg)]);
+end
+
+figure 
+plot(5:5:150,avg_deg,'r')
+set(gca,'xtick',5:5:150)
+hold on
+ plot(5:5:150,circ_Std,'g*'); %errorbar(y,err)
+% legend('mean','std');
+% xlabel('frequency (Hz)');
+% ylabel('phase(deg)');
+
+
+%NEED TO ::: find all the data files, go through the data files and .. call
+%one file, find all phases, move onto next file, THEN find the mean of all
+%the phases.
+
+
+
+
