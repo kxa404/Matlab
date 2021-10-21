@@ -1,0 +1,17 @@
+function [phivalues] = findsinphases(stimpeakt,speakt)
+newspeaks = [];
+phivalues = [];
+
+for i=1:length(stimpeakt)-1;
+    tau=stimpeakt(i+1)-stimpeakt(i);
+    tpeak1 = stimpeakt(i);
+    tpeak2 = stimpeakt(i+1);
+    newspeaks = speakt(find(speakt >= tpeak1 & speakt <= tpeak2));    
+    if length(newspeaks)>1
+        newspeaks = newspeaks(1); %finds "first" neural spike
+    end
+    
+    deltat=newspeaks-stimpeakt(i);
+    phi=2*pi*(deltat/tau);
+    phivalues = [phivalues phi];
+end
