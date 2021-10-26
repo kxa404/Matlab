@@ -1,0 +1,53 @@
+clc
+clear
+
+%gets data
+dataDir = uigetdir(pwd,'find files');
+    if exist('dataDir')~=1;
+        dataDir = uigetdir(pwd,'findfiles'); 
+    end
+dataFiles=dir([dataDir,'/*.out']);
+
+
+% newphirad=[];
+avg_phase=[];
+Standarddev=[];
+newvec=[];
+
+for i = 1:length(dataFiles)  
+    fname = dataFiles(i).name; 
+    sorteddata = importdata([dataDir,filesep,fname]); 
+    speakt = sorteddata.data(:,1); %speakt (hpeakt) = spike times
+    stimpeakt = sorteddata.data(:,3); %stimpeakt (wpeakt) = stimulus peak times
+    
+    phivalues = findsinphases(stimpeakt,speakt);%calls function
+    vecstrength=vstrength(phivalues);%calls function
+    newvec=[newvec vecstrength];
+    
+    %finds average phase and converts to degrees
+    avg_phase = [avg_phase circ_mean(phivalues')];%finds average phase
+    avg_deg = avg_phase*180/pi;%converts to degrees
+    new_avgdeg=mod(avg_deg,360);%flips degrees from neg to pos
+    
+    %finds standard deviation
+    S=std(phivalues);
+    Standarddev=[Standarddev S];
+    newSTD=Standarddev*180/pi;
+    
+%     phirad=(new_avgdeg)*pi/180%change to radians
+%     newphirad=[newphirad phirad];
+    
+end
+
+figure 
+xlabel('frequency (Hz)');
+ylabel('phase(deg)');
+hold on
+set(gca,'ylim',[-50,500]);
+errorbar(5:5:150,new_avgdeg,newSTD);
+hold on
+set(gca,'xtick',5:5:150)
+hold on
+figure
+compass(newvec)
+
