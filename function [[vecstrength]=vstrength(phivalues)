@@ -1,0 +1,6 @@
+function [vecstrength]=vstrength(phivalues)
+   vstrength=[];
+   
+   vecstrength=(sqrt((sum(sin(phivalues))).^2)+((sum(cos(phivalues))).^2))/length(phivalues); 
+   
+end
