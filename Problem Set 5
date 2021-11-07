@@ -3,6 +3,7 @@ pic=drosophila_embryo_wild_type;
 I=rgb2gray(pic);
 imshow(I)
 
+%code my professor gave me
 hy = fspecial(average);
 hx = hy';
 Iy = imfilter(double(pic), hy, 'replicate');
@@ -11,6 +12,14 @@ img = sqrt(Ix.^2 + Iy.^2);
 figure, imshow(img,[]), title(Filtered')
 img = img./max(max(img));
 
+%amended code
+hy = fspecial('average');  
+hx = hy';
+Iy = imfilter(double(pic), hy, 'replicate');
+Ix = imfilter(double(pic), hx, 'replicate');
+img = sqrt(Ix.^2 + Iy.^2);
+figure, imshow(img,[]), title('Filtered')
+img = img./max(max(img));
 
 
 
