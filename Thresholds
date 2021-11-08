@@ -1,0 +1,41 @@
+%Example threshold used for a video
+
+dataDir=uigetdir('get movie folder');
+mvs = dir([dataDir,'/*.mp4']);
+nm=mvs.name;
+r=VideoReader([dataDir,filesep,nm]); 
+frames=read(r,[1 1000]);
+
+pic=frames(:,:,1,1); 
+imagesc(pic);
+
+threshs = 0.1:0.1:0.8; %Try a few thresholds (this is one section I'm confused. Can I change this at all)
+
+for i =1:length(threshs) 
+    pic = frames(:,:,1); 
+    BW = im2bw(pic,threshs(i)); 
+    subplot(2,4,i); 
+    imagesc(BW);
+    title(['frame ',num2str(i)]);
+end
+
+t = input('which threshold?');
+BW = im2bw(pic,threshs(t));
+BW = imcomplement(BW);
+
+
+%I am working with an image so videoreader, frames, etc. I cannot use. My working code is below (after import of image and making it grayscale)
+%"sobelpic" is the name of the image.
+%I'm getting an error that my subplot is too large. 
+%I'm thinking that I need to manipulate my threshs (somehow?) because ultimately I need to choose "0.34" as a threshold value according to my professor.
+
+threshs = 0.01:0.01:0.8;
+   for i =1:length(threshs) 
+    BW = im2bw(sobelpic,threshs(i));
+    subplot(1,2,i); 
+    imagesc(BW);
+    title(['frame ',num2str(i)]);
+   end
+t = input('which threshold?');
+BW = im2bw(sobelpic,threshs(t));
+BW = imcomplement(BW);
