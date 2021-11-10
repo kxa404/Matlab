@@ -1,0 +1,58 @@
+uiopen('location_drosophila_embryo_wild_type.tif');
+pic=drosophila_embryo_wild_type;
+graypic=rgb2gray(pic);
+imshow(graypic)
+hy = fspecial('sobel');
+hx = hy';
+Iy = imfilter(double(graypic), hy, 'replicate');
+Ix = imfilter(double(graypic), hx, 'replicate');
+img = sqrt(Ix.^2 + Iy.^2);
+figure(2), imshow(img,[]), title('Sobel')
+img = img./max(max(img));
+sobelpic=img;
+%chosen threshold
+threshs = [0.34]
+   for i =1:length(threshs) 
+    BW = im2bw(sobelpic,threshs(i));
+    imagesc(BW);
+    title(['threshs=0.34 ',num2str(i)]);
+   end
+BW = im2bw(sobelpic,threshs(1));
+BW = imcomplement(BW);
+imshow(BW)
+s = regionprops(BW,'Orientation', 'MajorAxisLength', ...
+                    'MinorAxisLength', 'Eccentricity', 'Centroid');
+            hold on
+            phi = linspace(0,2*pi,50);
+            cosphi = cos(phi);
+            sinphi = sin(phi);
+            for k = 1:length(s)  
+                            xbar = s(k).Centroid(1);
+                            ybar = s(k).Centroid(2);
+                            a = s(k).MajorAxisLength/2; % I believe I need to work in this area? But I'm not sure.
+                            b = s(k).MinorAxisLength/2;
+                            theta = pi*s(k).Orientation/180;
+                            R = [ cos(theta)   sin(theta)
+                                 -sin(theta)   cos(theta)];
+                            xy = [a*cosphi; b*sinphi];
+                            xy = R*xy;
+                            x = xy(1,:) + xbar;
+                            y = xy(2,:) + ybar;
+                            plot(x,y,'r','LineWidth',2);     
+                            hold on;
+            end
+      
+%s=regionprops (number of nuclei) = 803
+%I've tried 
+for k=1:length(s)
+    UB=200
+LB=3
+area=s.Area(LB> 3, UB<200);
+end
+%and
+upperareas = (s.Area.<200)
+lowerareas= (s.Area.>3)
+diameters = mean([s.MajorAxisLength<200 s.MinorAxisLength>3],2);
+radii = diameters/2;
+viscircles(areas,radii);
+%but I'm not exactly sure what I'm doing.
