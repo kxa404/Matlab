@@ -1,0 +1,37 @@
+dataDir=uigetdir('get movie folder');
+mvs = dir([dataDir,'/*.mp4']);
+nm=mvs.name;
+
+r=VideoReader([dataDir,filesep,nm]); 
+frames=read(r,[1 11]);
+
+pic=frames(:,:,1,1); 
+imagesc(pic);
+
+figure;
+for i =2:11
+    pic = frames(:,:,:,i);
+    pic = rgb2gray(pic);
+   % pic = flipud(pic);
+    subplot(5,1,[1 4]);
+    hold on;
+    imagesc(pic);
+    colormap(gray);
+    %plot(data.data(i,1),data.data(i,2),'bo');
+    subplot(5,1,5);
+    xlim([1 11]);
+    ylim([min(-y) max(-y)]);
+    plot([i-1 i],[-y(i-1) -y(i)]); hold on;
+
+    %plot(1:i,y(1:i),'--'); hold on;
+    pause(0.1);
+    
+     frame = getframe(gcf);
+    writeVideo(writerObj,frame);
+
+    
+end
+
+ close(writerObj);
+ 
+ 
