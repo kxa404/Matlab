@@ -1,0 +1,98 @@
+%plots the moving box and then makes a separate figure for it's path using red circles. 
+load('movingbox (2).mat');
+figure
+gput=[];
+for i=1:5,
+    BW=imagesc(mov(:,:,i));    
+    colormap(gray);
+    title('pick centroid')
+    [xs,ys] = ginput(1);
+    pause(0.1);
+    hold on
+    gput=[gput ginput(1)];
+end
+
+ figure
+ xlim([0 700])
+ ylim([0 700])
+ plot(gput,'ro','LineWidth',3,'MarkerSize',15)
+ camroll(90)
+
+
+
+
+
+
+%code I'm working on fixing to get background subtraction
+load('movingbox (2).mat');
+figure
+for i=1:30,
+    BW=imagesc(mov(:,:,i));    
+    colormap(gray);
+    pause(0.1);
+    hold on
+end
+    difference = double(mov(:,:,frame x)) - double(mov(:,:,frame 1)); %this is key but unsure how to use it.
+
+%trying to find a way to create frames since I need it in the "difference" line on line 35. Not really working
+% dataDir=load('movingbox (2).mat');
+r=find(frames(dataDir));
+frames=read(r,[1 300]);
+
+pic=frames(:,:,1,1); 
+imagesc(pic);
+threshs = 0.1:0.1:0.8; 
+%converting to black and white
+   for i =1:length(threshs) 
+    pic = frames(:,:,1); 
+    BW = im2bw(pic,threshs(i));
+    subplot(2,4,i); 
+    imagesc(BW);
+    title(['frame ',num2str(i)]);
+   end
+
+t = input('which threshold?');
+BW = im2bw(BW,threshs(t));
+
+BW = imcomplement(BW);
+
+BW_select = bwselect(BW,xs,ys,8);
+b = bwlabel(BW_select,8); 
+
+%plotting with circles by finding the centroid
+ s = regionprops(b, 'Area','Orientation', 'MajorAxisLength', ...
+                    'MinorAxisLength', 'Eccentricity', 'Centroid');
+            hold on
+            phi = linspace(0,2*pi,50);
+            cosphi = cos(phi);
+            sinphi = sin(phi);
+            for k = 1:length(s)  %draw red outlines on all of the blobs
+                            %finding where these are
+                            xbar = s(k).Centroid(1);
+                            ybar = s(k).Centroid(2);
+                            a = s(k).MajorAxisLength/2;
+                            b = s(k).MinorAxisLength/2;
+                            %drawing ellipses
+                            theta = pi*s(k).Orientation/180;
+                            R = [ cos(theta)   sin(theta)
+                                 -sin(theta)   cos(theta)];
+                            xy = [a*cosphi; b*sinphi];
+                            xy = R*xy;
+                            x = xy(1,:) + xbar;
+                            y = xy(2,:) + ybar;
+                            plot(x,y,'r','LineWidth',2);     
+                            hold on;
+            end
+
+
+
+
+
+
+
+
+
+
+
+
+
