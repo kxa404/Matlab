@@ -1,0 +1,9 @@
+function [rxnt]=tictoc[age,hourslept]
+rxnt=[]; %reactiontime
+    for i=1:length(%how many times we want to show a box, 10?)
+
+
+
+    end
+    
+    
