@@ -1,0 +1,166 @@
+[y Fs]= audioread('Biology321Audiofile.mp4');
+subject = 0;
+subject_total = input('*FOR ADMINISTRATOR* How many subjects are you testing? ');
+sleep_vec = [];
+age_vec = [];
+reactionTime_blue_vec = [];
+reactionTime_red_vec = [];
+while subject < subject_total
+%% Collects demographic data
+    age = input('what is your age? ');
+    age_vec = [age_vec age];
+    sleep = input('How many hours did you sleep last night? ');
+    if sleep >= 8
+        % 1 = more than 8 hours of sleep
+        sleep_vec = [sleep_vec 1];
+    else
+        % 2 = less than 8 hours of sleep
+        sleep_vec = [sleep_vec 0];
+    end
+%% Stimulus
+rR=[];
+rB=[];
+    %creates blank figure
+    clf;axis off
+    title('Press Space bar when you see a color!')
+    %creates a random pause timer for stimulus to flash   
+    pause(randi(3))
+    hold on
+    
+    %Puts on the blue stimulus
+    rectangle('Position',[0 0 10 10] ,'FaceColor', 'b', 'EdgeColor', 'b');
+    axis off
+    title('Press Space bar when you see a color!')
+    %starts the clock
+    blue_stim = tic;    
+    %waits for you to press a button
+    waitforbuttonpress;
+    beep
+    %measures the reaction time
+    reactionTime_blue = toc(blue_stim);
+    
+    %resets the stimulus
+    pause(randi(3))
+    clf;axis off
+    title('Press Space bar when you see a color!')
+    %makes new timer    
+    pause(randi(3))
+    hold on
+    
+    %Puts on the red stimulus
+    rectangle('Position',[0 0 10 10] ,'FaceColor', 'r', 'EdgeColor', 'r');
+    axis off
+    title('Press Space bar when you see a color!')
+    %starts the clock
+    red_stim = tic;  
+    %waits for you to press a button
+    waitforbuttonpress; 
+    beep
+    %measures the reaction time
+    reactionTime_red = toc(red_stim);
+    
+    pause(randi(3))
+    
+    %creates blank figure
+    clf;axis off
+    title('Press Space bar when you see a color!')
+    %creates a random pause timer for stimulus to flash   
+    pause(randi(3))
+    hold on
+    
+    %Puts on the blue stimulus
+    rectangle('Position',[0 0 10 10] ,'FaceColor', 'b', 'EdgeColor', 'b');
+    axis off
+    title('Press Space bar when you see a color!')
+    %starts the clock
+    blue_stim_2 = tic;    
+    %waits for you to press a button
+    waitforbuttonpress;
+    beep
+    %measures the reaction time
+    reactionTime_blue_2 = toc(blue_stim_2);
+    
+    %resets the stimulus
+    pause(randi(3))
+    clf;axis off
+    title('Press Space bar when you see a color!')
+    %makes new timer    
+    pause(randi(3))
+    hold on
+    
+    %Puts on the red stimulus
+    rectangle('Position',[0 0 10 10] ,'FaceColor', 'r', 'EdgeColor', 'r');
+    axis off
+    title('Press Space bar when you see a color!')
+    %starts the clock
+    red_stim_2 = tic;  
+    %waits for you to press a button
+    waitforbuttonpress; 
+    beep
+    %measures the reaction time
+    reactionTime_red_2 = toc(red_stim_2);   
+
+    %creates the mean for all subjects reaction times
+    hold on
+    meanrr=mean((reactionTime_red)+(reactionTime_red_2));
+    meanbr=mean((reactionTime_blue)+(reactionTime_blue_2));
+
+    pause(randi(3)) 
+    sound(y, Fs)
+    close all
+
+%stores all the data into a vector
+reactionTime_blue_vec = [reactionTime_blue_vec reactionTime_blue reactionTime_blue_2];
+reactionTime_red_vec = [reactionTime_red_vec reactionTime_red reactionTime_red_2];
+
+    subject = subject+1;
+end
+
+%remove extra variables so data analysis is a little easier
+clear red_stim blue_stim red_stim_2 blue_stim_2 sleep
+save('subject_data')
+
+
+
+%%%%%%%%%Data Analysis
+
+%#1) comparison of ages with subjects mean reaction time on two different
+%bar graphs (subplotted)
+
+    %creates mean per subject
+    rR=reshape(reactionTime_red_vec,2,[])
+    rB=reshape(reactionTime_blue_vec,2,[])
+    rRbar=mean(rR)
+    rBbar=mean(rB)
+
+    figure
+    subplot(1,2,1)
+    bar(age_vec,rRbar,'r')
+    hold on;
+    subplot(1,2,2)
+    bar(age_vec,rBbar,'b')
+
+%#2 plot of reaction times to hours slep
+    figure
+    subplot(1,2,1)
+    bar(sleep_vec,rRbar,'r')
+    hold on;
+    subplot(1,2,2)
+    bar(sleep_vec,rBbar,'b')
+        %needs worked
+
+%#3 red reaction time vs blue reaction time with xlabel as value
+figure
+    subplot(1,2,1)
+    bar(1,meanrr,'r')
+    xlabel(meanrr)
+    hold on;
+    subplot(1,2,2)
+    bar(1,meanbr,'b')
+    xlabel(meanbr)
+
+
+
+
+
+
